@@ -189,7 +189,7 @@ function saveUser(): bool{
 function authenticate($username, $password): bool|array|null{
   $conn     = getConnection();
   $password = md5($password);
-  $sql      = "SELECT * FROM usuario WHERE `Usuario` = '$username' AND `Contrasena` = '$password'";
+  $sql      = "SELECT * FROM usuario WHERE `Usuario` = '$username' AND `Contrasena` = '$password' and Estado = 1";
   $result = $conn->query($sql);
 
   try {
@@ -200,9 +200,18 @@ function authenticate($username, $password): bool|array|null{
         return false;
     }
     
-    $results = $result->fetch_array();
-    $conn->close();
-    return $results;
+    // Si el usuario existe
+    if ($results = $result->fetch_array()) {
+        // Actualizar la columna fecha_ultimo_login con la fecha actual
+        $update_sql = "UPDATE usuario SET fecha_ultimo_login = NOW() WHERE Usuario = '$username'";
+        $conn->query($update_sql); // Ejecutar la actualización
+        
+        $conn->close();
+        return $results; // Devolver los resultados del usuario
+    } else {
+        $conn->close();
+        return null; // Si no se encontró el usuario
+    }
     
 } catch (mysqli_sql_exception $e) {
     if (strpos($e->getMessage(), "Table 'workshop3.usuario' doesn't exist") !== false) {
