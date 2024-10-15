@@ -35,11 +35,9 @@ $dbname = "workshop3";
     echo "Ejecutando la consulta para obtener usuarios activos...\n"; // Mensaje de depuración
     $result = $conn->query($sql);
     
-    // Verificar si se encontraron usuarios activos
     if ($result->num_rows > 0) {
         echo "Se encontraron " . $result->num_rows . " usuarios activos.\n"; // Mensaje de depuración
-        // ... (resto del código)
-    } else {
++    } else {
         echo "No se encontraron usuarios activos.\n";
     }
 
